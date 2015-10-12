@@ -96,6 +96,8 @@ public class PhoneBookClient extends Application {
         
         //
         contactTableView.setItems(names);
+        contactTableView.getSelectionModel().selectedItemProperty().addListener(
+                            (observable, oldValue, newValue) -> showPersonDetails(newValue));
 
         // set up newPane
 
@@ -112,6 +114,10 @@ public class PhoneBookClient extends Application {
         primaryStage.setTitle("PhoneBook");
         primaryStage.setScene(homeScene);
         primaryStage.show();
+    }
+
+    public void showPersonDetails(Contact contact) {
+        System.out.println("person selected is == " + contact.getName());
     }
 
     public void ButtonClicked(ActionEvent e) {
