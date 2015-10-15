@@ -16,11 +16,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.stage.Stage;
 
 import java.sql.ResultSet;
@@ -39,7 +42,8 @@ public class PhoneBookClient extends Application {
     /* This scene lays out a form for adding new Contacts to the PhoneBook */
     Scene newScene;
     Scene searchScene;
-    FlowPane homePane, searchPane;
+    BorderPane homePane;
+    FlowPane searchPane; // did have homePane here before
     GridPane newPane;
     Stage thestage;
 
@@ -72,11 +76,15 @@ public class PhoneBookClient extends Application {
 
 
         //make 3 Panes
-        homePane = new FlowPane();
+        homePane = new BorderPane(); //FlowPane();
         searchPane = new FlowPane();
         newPane = makeGridPane();
-        homePane.setVgap(10);
+        //homePane.setVgap(10);
         searchPane.setVgap(10);
+
+        VBox detailPaneContainer = new VBox();
+        GridPane detailPane = makeDetailPane();
+        detailPaneContainer.getChildren().addAll(detailPane);
 
 
         //set background color of each Pane
@@ -84,8 +92,8 @@ public class PhoneBookClient extends Application {
         searchPane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
 
         // set up homepane
-        String[] contactColumnNames = new String[] {"ID", "Name", "CompanyName", "Phone Number", "cell Num", "faxNum", "email", "Commodity", "notes"};
-        String[] contactVariablesNames = new String[] {"contactID", "name", "companyName", "phoneNumber", "cellNumber", "faxNumber", "email", "primaryCommodity", "notes"};
+        String[] contactColumnNames = new String[] {"Name", "CompanyName", "Phone Number"};//, "cell Num", "faxNum", "email", "Commodity", "notes"};
+        String[] contactVariablesNames = new String[] {"name", "companyName", "phoneNumber"};//, "cellNumber", "faxNumber", "email", "primaryCommodity", "notes"};
 
         ////////////
         TableViewCustom<Contact> contactTableView = new 
@@ -97,12 +105,18 @@ public class PhoneBookClient extends Application {
         //
         contactTableView.setItems(names);
         contactTableView.getSelectionModel().selectedItemProperty().addListener(
-                            (observable, oldValue, newValue) -> showPersonDetails(newValue));
+                            (observable, oldValue, newValue) -> showPersonDetails(newValue, detailPane));
 
         // set up newPane
-
+        
         //add everything to panes
-        homePane.getChildren().addAll(lblscene1, newBtn, searchBtn, tableViewsContainer);
+        //homePane.getChildren().addAll(lblscene1, newBtn, searchBtn, tableViewsContainer);
+        homePane.setLeft(tableViewsContainer);
+        homePane.setRight(detailPane);
+        //homePane.setRight(
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(newBtn, searchBtn);
+        homePane.setBottom(hbox);
         searchPane.getChildren().addAll(searchLbl);
         //newPane.getChildren().addAll(newLbl, homeBtn);
 
@@ -116,9 +130,50 @@ public class PhoneBookClient extends Application {
         primaryStage.show();
     }
 
-    public void showPersonDetails(Contact contact) {
-        System.out.println("person selected is == " + contact.getName());
+    public void showPersonDetails(Contact contact, GridPane pane) {
+        //clear data from textfields
+        clearAllTextFields(pane);
+
+        //populate texfields
+        TextField field = (TextField) pane.lookup("#conNameTF");
+        field.setText(contact.getName());
+
+        
+        field = (TextField) pane.lookup("#conPhoneTF");
+        field.setText(contact.getPhoneNumber());
+
+        field = (TextField) pane.lookup("#conCompanyTF");
+        field.setText(contact.getCompanyName());
+
+        field = (TextField) pane.lookup("#conCellTF");
+        field.setText(contact.getCellNumber());
+
+        field = (TextField) pane.lookup("#conFaxTF");
+        field.setText(contact.getFaxNumber());
+
+
+        field = (TextField) pane.lookup("#conEmailTF");
+        field.setText(contact.email());
+
+        field = (TextField) pane.lookup("#conCommodityTF");
+        field.setText(contact.getCommodity());
+
+        TextArea afield = new TextArea();
+        afield = (TextArea) pane.lookup("#conNotesTF");
+        afield.setText(contact.getNotes());
+
     }
+
+    private void clearAllTextFields(GridPane pane) {
+        for (Node node : pane.getChildren()) {
+            System.out.println("Id: " + node.getId());
+            if (node instanceof TextField) {
+                // clear
+                ((TextField)node).setText("");
+            }
+        }
+    }
+
 
     public void ButtonClicked(ActionEvent e) {
         if (e.getSource() == newBtn)
@@ -308,4 +363,61 @@ public class PhoneBookClient extends Application {
         pane.add(newLbl, 1, 0);
         return pane;
     }
+
+    public GridPane makeDetailPane() {
+        GridPane pane = new GridPane();
+        pane.setVgap(5);
+
+        Label conName = new Label("Name");
+        TextField conNameTF = new TextField();
+        conNameTF.setId("conNameTF");
+        pane.add(conName, 0, 1);
+        pane.add(conNameTF, 1, 1);
+
+        Label conPhone = new Label("Phone Number");
+        TextField conPhoneTF = new TextField();
+        conPhoneTF.setId("conPhoneTF");
+        pane.add(conPhone, 0, 2);
+        pane.add(conPhoneTF, 1, 2);
+
+        Label conCompany = new Label("Company");
+        TextField conCompanyTF = new TextField();
+        conCompanyTF.setId("conCompanyTF");
+        pane.add(conCompany, 0, 3);
+        pane.add(conCompanyTF, 1, 3);
+
+        Label conFax = new Label("Fax Number");
+        TextField conFaxTF = new TextField();
+        conFaxTF.setId("conFaxTF");
+        pane.add(conFax, 0, 4);
+        pane.add(conFaxTF, 1, 4);
+
+        Label conCell = new Label("Cell Number");
+        TextField conCellTF = new TextField();
+        conCellTF.setId("conCellTF");
+        pane.add(conCell, 0, 5);
+        pane.add(conCellTF, 1, 5);
+
+        Label conEmail = new Label("Email Address");
+        TextField conEmailTF = new TextField();
+        conEmailTF.setId("conEmailTF");
+        pane.add(conEmail, 0, 6);
+        pane.add(conEmailTF, 1, 6);
+
+        Label conCommodity = new Label("Primary Commodity");
+        TextField conCommodityTF = new TextField();
+        conCommodityTF.setId("conCommodityTF");
+        pane.add(conCommodity, 0, 7);
+        pane.add(conCommodityTF, 1, 7);
+
+        Label conNotes = new Label("Notes");
+        TextArea conNotesTF = new TextArea();
+        conNotesTF.setId("conNotesTF");
+        conNotesTF.setPrefColumnCount(20);
+        pane.add(conNotes, 0, 8);
+        pane.add(conNotesTF, 1, 8);
+        pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
+        return pane;
+    }
+
 }
