@@ -169,7 +169,7 @@ public class PhoneBookClient extends Application {
 
     private void clearAllTextFields(GridPane pane) {
         for (Node node : pane.getChildren()) {
-            System.out.println("Id: " + node.getId());
+            //System.out.println("Id: " + node.getId());
             if (node instanceof TextField) {
                 // clear
                 ((TextField)node).setText("");
@@ -187,7 +187,9 @@ public class PhoneBookClient extends Application {
             thestage.setScene(homeScene);
     }
 
-    /* Method populates observable list with data from database
+    /**
+     * getContacts() -  Method populates observable list with data from 
+     *                  database.
      */
     private void getContacts() {
         // make connection to database ect.
@@ -202,8 +204,6 @@ public class PhoneBookClient extends Application {
             conn = DriverManager.getConnection(dbURL);
             if (conn != null) {
                 DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-
-
                 statement = conn.createStatement();
                 String sql = "Select * from Contact;"; 
                 ResultSet rs = statement.executeQuery(sql);
@@ -220,13 +220,9 @@ public class PhoneBookClient extends Application {
                                           rs.getString("EMAIL"), 
                                           rs.getString("NOTES"));
                     names.add(contact);
-                    //System.out.println(contact.toString());
                 }
-
                 statement.close();
             }
-
-
         conn.close();
         } catch(SQLException se) {
             System.out.println("Exception");
@@ -296,18 +292,7 @@ public class PhoneBookClient extends Application {
             @Override
             public void handle(ActionEvent e) {
                 String sql = "INSERT INTO CONTACT (ID, NAME, PHONENUMBER, COMPANYNAME, FAXNUMBER, CELLNUMBER, EMAIL, PRIMARYCOMMODITY, NOTES) ";
-
-                //System.out.println("Contact Name:: " + conNameTF.getText());
-                //System.out.println("Phone Number:: " + conPhoneTF.getText());
-                //System.out.println("Company:: " + conCompanyTF.getText());
-                //System.out.println("Fax Number:: " + conFaxTF.getText());
-                //System.out.println("Cell Number:: " + conCellTF.getText());
-                //System.out.println("Email:: " + conEmailTF.getText());
-                //System.out.println("PrimaryCommodity:: " + conCommodityTF.getText());
-                //System.out.println("Notes:: " + conNotesTF.getText());
-                // will need to write to database
-               
-               Statement stmt;
+                Statement stmt;
 
                 try {
                     Class.forName("org.sqlite.JDBC");
@@ -330,9 +315,6 @@ public class PhoneBookClient extends Application {
                             + "\', \'" + conCommodityTF.getText()
                             + "\', \'" + conNotesTF.getText() + "\');";
                         
-                        //System.out.println("-----------------------------");
-                        //System.out.println(sql);
-                        //System.out.println("-----------------------------");
                         if (!conNameTF.getText().equals("") && !conPhoneTF.getText().equals(""))
                             stmt.executeUpdate(sql);
 
@@ -347,19 +329,18 @@ public class PhoneBookClient extends Application {
                     System.out.println("ClassNotFoundException!!!!");
                 }
                 //clear data from textfields
-                conNameTF.clear();
-                conPhoneTF.clear();
-                conCompanyTF.clear();
-                conFaxTF.clear();
-                conCellTF.clear();
-                conEmailTF.clear();
-                conCommodityTF.clear();
-                conNotesTF.clear();
+                //conNameTF.clear();
+                //conPhoneTF.clear();
+                //conCompanyTF.clear();
+                //conFaxTF.clear();
+                //conCellTF.clear();
+                //conEmailTF.clear();
+                //conCommodityTF.clear();
+                //conNotesTF.clear();
+                clearAllTextFields(pane);
 
-                System.out.println("Inserted record into...");
-                // return to homeScene
+                // return to homeScene but first update tableview with Contact
                 getContacts();
-///////////////////////////////////////////
                 contactTableView.setItems(names);
                 thestage.setScene(homeScene);
             }
@@ -423,5 +404,4 @@ public class PhoneBookClient extends Application {
         pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
         return pane;
     }
-
 }
