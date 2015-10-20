@@ -43,7 +43,7 @@ public class PhoneBookClient extends Application {
     Scene newScene;
     Scene searchScene;
     BorderPane homePane;
-    FlowPane searchPane; // did have homePane here before
+    FlowPane searchPane;
     GridPane newPane;
     Stage thestage;
 
@@ -58,7 +58,6 @@ public class PhoneBookClient extends Application {
     public void start(Stage primaryStage) {
         thestage = primaryStage;
         // can now use the stage in other methods
-
         connector = new SQLiteConnector();
 
         //populate observable list
@@ -66,19 +65,16 @@ public class PhoneBookClient extends Application {
 
         // make things to put on panes
         newBtn = new Button("New");
-
         searchBtn = new Button("Search");
         newBtn.setOnAction(e-> ButtonClicked(e));
-
         searchBtn.setOnAction(e-> ButtonClicked(e));
 
         lblscene1 = new Label("Home Scene 1");
         searchLbl = new Label("Search");
-        newLbl    = new Label("Form to add new Contact");
-
+        newLbl    = new Label("New Contact");
 
         //make 3 Panes
-        homePane = new BorderPane(); //FlowPane();
+        homePane = new BorderPane();
         searchPane = new FlowPane();
         newPane = makeGridPane();
         //homePane.setVgap(10);
@@ -88,45 +84,35 @@ public class PhoneBookClient extends Application {
         GridPane detailPane = makeDetailPane();
         detailPaneContainer.getChildren().addAll(detailPane);
 
-
         //set background color of each Pane
-        homePane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
+        homePane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px; -fx-border-color: black;");
         searchPane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
 
         // set up homepane
         String[] contactColumnNames = new String[] {"Name", "CompanyName", "Phone Number"};//, "cell Num", "faxNum", "email", "Commodity", "notes"};
         String[] contactVariablesNames = new String[] {"name", "companyName", "phoneNumber"};//, "cellNumber", "faxNumber", "email", "primaryCommodity", "notes"};
 
-        ////////////
-        //TableViewCustom<Contact> 
         contactTableView = new 
                 TableViewCustom<Contact>(contactColumnNames,
                                             contactVariablesNames, names);
         VBox tableViewsContainer = new VBox();
         tableViewsContainer.getChildren().addAll(contactTableView);
-        
-        //
         contactTableView.setItems(names);
         contactTableView.getSelectionModel().selectedItemProperty().addListener(
                             (observable, oldValue, newValue) -> showPersonDetails(newValue, detailPane));
 
-        // set up newPane
-        
         //add everything to panes
-        //homePane.getChildren().addAll(lblscene1, newBtn, searchBtn, tableViewsContainer);
         homePane.setLeft(tableViewsContainer);
         homePane.setRight(detailPane);
-        //homePane.setRight(
         HBox hbox = new HBox();
         hbox.getChildren().addAll(newBtn, searchBtn);
         homePane.setBottom(hbox);
         searchPane.getChildren().addAll(searchLbl);
-        //newPane.getChildren().addAll(newLbl, homeBtn);
 
         //make 3 scenes from 3 panes and set window sizes
-        homeScene = new Scene(homePane, 600, 600);
-        newScene  = new Scene(newPane, 600, 600);
-        searchScene = new Scene(searchPane, 600, 600);
+        homeScene = new Scene(homePane, 700, 500);
+        newScene  = new Scene(newPane, 700, 500);
+        searchScene = new Scene(searchPane, 700, 500);
 
         primaryStage.setTitle("PhoneBook");
         primaryStage.setScene(homeScene);
@@ -141,7 +127,6 @@ public class PhoneBookClient extends Application {
         TextField field = (TextField) pane.lookup("#conNameTF");
         field.setText(contact.getName());
 
-        
         field = (TextField) pane.lookup("#conPhoneTF");
         field.setText(contact.getPhoneNumber());
 
@@ -154,7 +139,6 @@ public class PhoneBookClient extends Application {
         field = (TextField) pane.lookup("#conFaxTF");
         field.setText(contact.getFaxNumber());
 
-
         field = (TextField) pane.lookup("#conEmailTF");
         field.setText(contact.email());
 
@@ -164,7 +148,6 @@ public class PhoneBookClient extends Application {
         TextArea afield = new TextArea();
         afield = (TextArea) pane.lookup("#conNotesTF");
         afield.setText(contact.getNotes());
-
     }
 
     private void clearAllTextFields(GridPane pane) {
@@ -187,6 +170,12 @@ public class PhoneBookClient extends Application {
             thestage.setScene(homeScene);
     }
 
+    //public editContact(Contact contact) {
+    //    Stage dialog = new Stage();
+    //    dialog.setTitle("Edit Contact");
+
+
+
     /**
      * getContacts() -  Method populates observable list with data from 
      *                  database.
@@ -194,7 +183,7 @@ public class PhoneBookClient extends Application {
     private void getContacts() {
         // make connection to database ect.
         names = FXCollections.observableArrayList();
-        System.out.println(" inside getContacts");
+        //System.out.println(" inside getContacts");
         Connection conn;
         Statement statement;
         try {
@@ -209,7 +198,6 @@ public class PhoneBookClient extends Application {
                 ResultSet rs = statement.executeQuery(sql);
                 
                 while(rs.next()) {
-                    System.out.println(rs.getString("NAME"));
                     Contact contact = new Contact(rs.getInt("ID"),
                                           rs.getString("NAME"),
                                           rs.getString("PHONENUMBER"), 
@@ -305,7 +293,7 @@ public class PhoneBookClient extends Application {
                         ResultSet rs = stmt.executeQuery("select count(*) from Contact;");
                         rs.next();
                         int id = rs.getInt(1) + 1;
-                        System.out.println("pid == " + id);
+                        //System.out.println("pid == " + id);
                         sql += "VALUES (" + id + ", \'" + conNameTF.getText()
                             + "\', \'" + conPhoneTF.getText()
                             + "\', \'" + conCompanyTF.getText()
@@ -329,14 +317,6 @@ public class PhoneBookClient extends Application {
                     System.out.println("ClassNotFoundException!!!!");
                 }
                 //clear data from textfields
-                //conNameTF.clear();
-                //conPhoneTF.clear();
-                //conCompanyTF.clear();
-                //conFaxTF.clear();
-                //conCellTF.clear();
-                //conEmailTF.clear();
-                //conCommodityTF.clear();
-                //conNotesTF.clear();
                 clearAllTextFields(pane);
 
                 // return to homeScene but first update tableview with Contact
@@ -351,8 +331,6 @@ public class PhoneBookClient extends Application {
 
     public GridPane makeDetailPane() {
         GridPane pane = new GridPane();
-        pane.setVgap(5);
-
         Label conName = new Label("Name");
         TextField conNameTF = new TextField();
         conNameTF.setId("conNameTF");
@@ -401,7 +379,26 @@ public class PhoneBookClient extends Application {
         conNotesTF.setPrefColumnCount(20);
         pane.add(conNotes, 0, 8);
         pane.add(conNotesTF, 1, 8);
-        pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
+        
+        pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px; -fx-border-color: black; -fx-border-width:2;");
+        Button editBtn = new Button("Edit");
+        Button delBtn  = new Button("Delete");
+        editBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+            // todo
+            }
+        });
+        delBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                //String sql = "Delete from Contacts where ID=" +
+                // todo may need to move handlers to different location
+            }
+        });
+        pane.add(editBtn, 0, 9);
+        pane.add(delBtn, 1, 9);
+
         return pane;
     }
 }
