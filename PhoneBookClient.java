@@ -50,6 +50,8 @@ public class PhoneBookClient extends Application {
     /* observable list of contacts */
     private ObservableList<Contact> names;
 
+    TableViewCustom<Contact> contactTableView; 
+    
     SQLiteConnector connector;
 
     @Override
@@ -96,7 +98,8 @@ public class PhoneBookClient extends Application {
         String[] contactVariablesNames = new String[] {"name", "companyName", "phoneNumber"};//, "cellNumber", "faxNumber", "email", "primaryCommodity", "notes"};
 
         ////////////
-        TableViewCustom<Contact> contactTableView = new 
+        //TableViewCustom<Contact> 
+        contactTableView = new 
                 TableViewCustom<Contact>(contactColumnNames,
                                             contactVariablesNames, names);
         VBox tableViewsContainer = new VBox();
@@ -217,7 +220,7 @@ public class PhoneBookClient extends Application {
                                           rs.getString("EMAIL"), 
                                           rs.getString("NOTES"));
                     names.add(contact);
-                    System.out.println(contact.toString());
+                    //System.out.println(contact.toString());
                 }
 
                 statement.close();
@@ -230,8 +233,6 @@ public class PhoneBookClient extends Application {
             System.out.println(se.getMessage());
         } catch (ClassNotFoundException ce) {
         }
-
-        //LinkedList<Contact> tempList = connector.getAll();
     }
 
     /**
@@ -296,14 +297,14 @@ public class PhoneBookClient extends Application {
             public void handle(ActionEvent e) {
                 String sql = "INSERT INTO CONTACT (ID, NAME, PHONENUMBER, COMPANYNAME, FAXNUMBER, CELLNUMBER, EMAIL, PRIMARYCOMMODITY, NOTES) ";
 
-                System.out.println("Contact Name:: " + conNameTF.getText());
-                System.out.println("Phone Number:: " + conPhoneTF.getText());
-                System.out.println("Company:: " + conCompanyTF.getText());
-                System.out.println("Fax Number:: " + conFaxTF.getText());
-                System.out.println("Cell Number:: " + conCellTF.getText());
-                System.out.println("Email:: " + conEmailTF.getText());
-                System.out.println("PrimaryCommodity:: " + conCommodityTF.getText());
-                System.out.println("Notes:: " + conNotesTF.getText());
+                //System.out.println("Contact Name:: " + conNameTF.getText());
+                //System.out.println("Phone Number:: " + conPhoneTF.getText());
+                //System.out.println("Company:: " + conCompanyTF.getText());
+                //System.out.println("Fax Number:: " + conFaxTF.getText());
+                //System.out.println("Cell Number:: " + conCellTF.getText());
+                //System.out.println("Email:: " + conEmailTF.getText());
+                //System.out.println("PrimaryCommodity:: " + conCommodityTF.getText());
+                //System.out.println("Notes:: " + conNotesTF.getText());
                 // will need to write to database
                
                Statement stmt;
@@ -329,9 +330,9 @@ public class PhoneBookClient extends Application {
                             + "\', \'" + conCommodityTF.getText()
                             + "\', \'" + conNotesTF.getText() + "\');";
                         
-                        System.out.println("-----------------------------");
-                        System.out.println(sql);
-                        System.out.println("-----------------------------");
+                        //System.out.println("-----------------------------");
+                        //System.out.println(sql);
+                        //System.out.println("-----------------------------");
                         if (!conNameTF.getText().equals("") && !conPhoneTF.getText().equals(""))
                             stmt.executeUpdate(sql);
 
@@ -357,6 +358,9 @@ public class PhoneBookClient extends Application {
 
                 System.out.println("Inserted record into...");
                 // return to homeScene
+                getContacts();
+///////////////////////////////////////////
+                contactTableView.setItems(names);
                 thestage.setScene(homeScene);
             }
         });
