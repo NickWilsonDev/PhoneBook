@@ -84,7 +84,8 @@ public class SQLiteConnector {
                 " CELLNUMBER     VARCHAR(20), " +
                 " PRIMARYCOMMODITY  VARCHAR(50), " +
                 " EMAIL          VARCHAR(50), " +
-                " NOTES          TEXT," +
+                " NOTES          TEXT, " +
+                " CARRIER        INTEGER, " + //this will be essentially boolean
                 " PRIMARY KEY(ID)); ";
             stmt.executeUpdate(sql);
             System.out.println("Created contact table");

@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.Scene;
@@ -157,6 +158,10 @@ public class PhoneBookClient extends Application {
                 // clear
                 ((TextField)node).setText("");
             }
+            if (node instanceof TextArea) {
+                //clear
+                ((TextArea)node).setText("");
+            }
         }
     }
 
@@ -206,8 +211,14 @@ public class PhoneBookClient extends Application {
                                           rs.getString("CELLNUMBER"), 
                                           rs.getString("PRIMARYCOMMODITY"), 
                                           rs.getString("EMAIL"), 
-                                          rs.getString("NOTES"));
+                                          rs.getString("NOTES"),
+                                          (1 == rs.getInt("CARRIER"))); //boolean
+                    //if (rs.getInt("CARRIER") == 1)
+                    //    setTextFill(Color.red);
+                    //else
+                    //    setTextFill(Color.black);
                     names.add(contact);
+
                 }
                 statement.close();
             }
@@ -220,7 +231,8 @@ public class PhoneBookClient extends Application {
     }
 
     /**
-     * Method set up and returns pane that has a form
+     * Method set up and returns pane that has a form. It is used for adding
+     * new Contacts to the database.
      */
     private GridPane makeGridPane() {
         GridPane pane = new GridPane();
@@ -270,6 +282,11 @@ public class PhoneBookClient extends Application {
         pane.add(conNotes, 0, 8);
         pane.add(conNotesTF, 1, 8);
 
+        //Label conIsCarrier = new Label("Carrier");
+        CheckBox conIsCarrier = new CheckBox("Carrier");
+        conIsCarrier.setAllowIndeterminate(false);
+        pane.add(conIsCarrier, 2, 2);
+
         pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px;");
         homeBtn = new Button("Cancel");
         saveBtn = new Button("Save");
@@ -279,7 +296,7 @@ public class PhoneBookClient extends Application {
         saveBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                String sql = "INSERT INTO CONTACT (ID, NAME, PHONENUMBER, COMPANYNAME, FAXNUMBER, CELLNUMBER, EMAIL, PRIMARYCOMMODITY, NOTES) ";
+                String sql = "INSERT INTO CONTACT (ID, NAME, PHONENUMBER, COMPANYNAME, FAXNUMBER, CELLNUMBER, EMAIL, PRIMARYCOMMODITY, NOTES, CARRIER) ";
                 Statement stmt;
 
                 try {
@@ -301,9 +318,14 @@ public class PhoneBookClient extends Application {
                             + "\', \'" + conCellTF.getText()
                             + "\', \'" + conEmailTF.getText()
                             + "\', \'" + conCommodityTF.getText()
-                            + "\', \'" + conNotesTF.getText() + "\');";
+                            + "\', \'" + conNotesTF.getText() + "\',";
+                        if (conIsCarrier.isSelected())
+                            sql += 1; // Contact is a carrier
+                        else
+                            sql += 0; // Contact is not a carrier
+                        sql += ");";
                         
-                        if (!conNameTF.getText().equals("") && !conPhoneTF.getText().equals(""))
+                        if ((!conNameTF.getText().equals("") || !conCompanyTF.getText().equals(""))  && !conPhoneTF.getText().equals(""))
                             stmt.executeUpdate(sql);
 
                         stmt.close();

@@ -27,6 +27,8 @@ public class Contact {
 
     private String notes;
 
+    private Boolean carrier;
+
     public Contact() {
     }
 
@@ -38,7 +40,7 @@ public class Contact {
 
     public Contact(int key, String conName, String phoneNum, String company,
                    String faxNum, String cellNum, String commodity, 
-                   String conEmail, String conNotes) {
+                   String conEmail, String conNotes, Boolean isCarrier) {
         contactID        = key;
         name             = conName;
         companyName      = company;
@@ -48,6 +50,7 @@ public class Contact {
         email            = conEmail;
         primaryCommodity = commodity;
         notes            = conNotes;
+        carrier          = isCarrier;
     }
 
 
@@ -97,6 +100,10 @@ public class Contact {
         return notes;
     }
 
+    public Boolean isCarrier() {
+        return carrier;
+    }
+
     /* setters */
 
     public void setId(int id) {
@@ -133,5 +140,9 @@ public class Contact {
 
     public void setNotes(String note) {
         note = note;
+    }
+
+    public void setCarrier(Boolean isCarrier) {
+        carrier = isCarrier;
     }
 }
