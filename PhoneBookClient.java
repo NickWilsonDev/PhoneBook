@@ -151,6 +151,15 @@ public class PhoneBookClient extends Application {
         afield.setText(contact.getNotes());
     }
 
+    /**
+     * clearAllTextFields() - Method is given a GridPane then it cycles through
+     *                        all children nodes of that Pane. If any nodes are
+     *                        instances of TextFields or TextAreas then their
+     *                        contents are rewritten to be blank.
+     * 
+     * @param - pane - A GridPane that contains TextFields or TextAreas that
+     *                 will be cleared.
+     */
     private void clearAllTextFields(GridPane pane) {
         for (Node node : pane.getChildren()) {
             //System.out.println("Id: " + node.getId());
@@ -165,8 +174,14 @@ public class PhoneBookClient extends Application {
         }
     }
 
-
-    public void ButtonClicked(ActionEvent e) {
+    /**
+     * ButtonClickedClicked() - Method is used to handle actions for the main
+     *                          buttons being clicked on the front page.
+     *
+     * @param - e - An ActionEvent that is generated when a button is clicked
+     *              by the user.
+     */
+    private void ButtonClicked(ActionEvent e) { //was public method
         if (e.getSource() == newBtn)
             thestage.setScene(newScene);
         else if(e.getSource() == searchBtn)
@@ -188,7 +203,6 @@ public class PhoneBookClient extends Application {
     private void getContacts() {
         // make connection to database ect.
         names = FXCollections.observableArrayList();
-        //System.out.println(" inside getContacts");
         Connection conn;
         Statement statement;
         try {
@@ -213,12 +227,7 @@ public class PhoneBookClient extends Application {
                                           rs.getString("EMAIL"), 
                                           rs.getString("NOTES"),
                                           (1 == rs.getInt("CARRIER"))); //boolean
-                    //if (rs.getInt("CARRIER") == 1)
-                    //    setTextFill(Color.red);
-                    //else
-                    //    setTextFill(Color.black);
                     names.add(contact);
-
                 }
                 statement.close();
             }
@@ -231,8 +240,11 @@ public class PhoneBookClient extends Application {
     }
 
     /**
-     * Method set up and returns pane that has a form. It is used for adding
-     * new Contacts to the database.
+     * makeGridPane() - Method sets up and returns pane that contains a form. 
+     *                  It is used for adding new Contacts to the database.
+     *
+     * @return GridPane - a pane that will contain a form for adding a new
+     *                    Contact to the database.
      */
     private GridPane makeGridPane() {
         GridPane pane = new GridPane();
@@ -298,7 +310,6 @@ public class PhoneBookClient extends Application {
             public void handle(ActionEvent e) {
                 String sql = "INSERT INTO CONTACT (ID, NAME, PHONENUMBER, COMPANYNAME, FAXNUMBER, CELLNUMBER, EMAIL, PRIMARYCOMMODITY, NOTES, CARRIER) ";
                 Statement stmt;
-
                 try {
                     Class.forName("org.sqlite.JDBC");
                     String dbURL = "jdbc:sqlite:Contact.db";
@@ -351,6 +362,16 @@ public class PhoneBookClient extends Application {
         return pane;
     }
 
+    /**
+     * makeDetailPane() - Method returns a pane that contains TextFields that
+     *                    shows details of a Contact from the database. This
+     *                    GridPane will appear on the front "page" of the 
+     *                    application.
+     *
+     * @return GridPane - a GridPane that contains details of the Contact, will
+     *                    be dynamically updated depending on what is selected
+     *                    by the user in the tableview.
+     */
     public GridPane makeDetailPane() {
         GridPane pane = new GridPane();
         Label conName = new Label("Name");
