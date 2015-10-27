@@ -102,6 +102,7 @@ public class PhoneBookClient extends Application {
         contactTableView.getSelectionModel().selectedItemProperty().addListener(
                             (observable, oldValue, newValue) -> showPersonDetails(newValue, detailPane));
 
+
         //add everything to panes
         homePane.setLeft(tableViewsContainer);
         homePane.setRight(detailPane);
@@ -121,8 +122,10 @@ public class PhoneBookClient extends Application {
     }
 
     public void showPersonDetails(Contact contact, GridPane pane) {
-        //clear data from textfields
+        //clear data from textfields 
         clearAllTextFields(pane);
+        if (contact == null) 
+            return;
 
         //populate texfields
         TextField field = (TextField) pane.lookup("#conNameTF");
@@ -149,6 +152,48 @@ public class PhoneBookClient extends Application {
         TextArea afield = new TextArea();
         afield = (TextArea) pane.lookup("#conNotesTF");
         afield.setText(contact.getNotes());
+
+        Button editBtn = new Button("Edit");
+        Button delBtn  = new Button("Delete");
+        /////////////// add handlers ///////////////
+        editBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+            // todo
+            }
+        });
+        delBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                //String sql = "Delete from Contacts where ID=" +
+                // todo may need to move handlers to different location
+                try {
+                    Class.forName("org.sqlite.JDBC");
+                    String dbURL = "jdbc:sqlite:Contact.db";
+                    //creates file if it does not exist
+                    Connection conn = DriverManager.getConnection(dbURL);
+                    Statement statement = null;
+                    if (conn != null) {
+                        DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+                        statement = conn.createStatement();
+                        String sql = "Delete from Contact where ID=" + contact.getId() + ";"; 
+                        statement.executeUpdate(sql);
+                        // refresh values in tables 
+                        getContacts();
+                        contactTableView.setItems(names);
+                        clearAllTextFields(pane);
+                    }
+                    statement.close();
+                    conn.close();
+                } catch(SQLException se) {
+                    System.out.println("Exception");
+                    System.out.println(se.getMessage());
+                } catch (ClassNotFoundException ce) {
+                }
+            }
+        });
+        pane.add(editBtn, 0, 9);
+        pane.add(delBtn, 1, 9);
     }
 
     /**
@@ -379,19 +424,6 @@ public class PhoneBookClient extends Application {
         pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px; -fx-border-color: black; -fx-border-width:2;");
         Button editBtn = new Button("Edit");
         Button delBtn  = new Button("Delete");
-        editBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-            // todo
-            }
-        });
-        delBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                //String sql = "Delete from Contacts where ID=" +
-                // todo may need to move handlers to different location
-            }
-        });
         pane.add(editBtn, 0, 9);
         pane.add(delBtn, 1, 9);
 
