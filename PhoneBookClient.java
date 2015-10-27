@@ -374,6 +374,37 @@ public class PhoneBookClient extends Application {
      */
     public GridPane makeDetailPane() {
         GridPane pane = new GridPane();
+        addTextFieldsToPane(pane);
+                
+        pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px; -fx-border-color: black; -fx-border-width:2;");
+        Button editBtn = new Button("Edit");
+        Button delBtn  = new Button("Delete");
+        editBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+            // todo
+            }
+        });
+        delBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                //String sql = "Delete from Contacts where ID=" +
+                // todo may need to move handlers to different location
+            }
+        });
+        pane.add(editBtn, 0, 9);
+        pane.add(delBtn, 1, 9);
+
+        return pane;
+    }
+
+    /**
+     * addTextFieldsToPane() - Private helper method to add TextFields to a
+     *                         pane given in the parameter.
+     *
+     * @param pane - A GridPane that the textfields will added to.
+     */
+    private void addTextFieldsToPane(GridPane pane) {
         Label conName = new Label("Name");
         TextField conNameTF = new TextField();
         conNameTF.setId("conNameTF");
@@ -422,26 +453,5 @@ public class PhoneBookClient extends Application {
         conNotesTF.setPrefColumnCount(20);
         pane.add(conNotes, 0, 8);
         pane.add(conNotesTF, 1, 8);
-        
-        pane.setStyle("-fx-background-color: #2185A6;-fx-padding: 10px; -fx-border-color: black; -fx-border-width:2;");
-        Button editBtn = new Button("Edit");
-        Button delBtn  = new Button("Delete");
-        editBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-            // todo
-            }
-        });
-        delBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                //String sql = "Delete from Contacts where ID=" +
-                // todo may need to move handlers to different location
-            }
-        });
-        pane.add(editBtn, 0, 9);
-        pane.add(delBtn, 1, 9);
-
-        return pane;
     }
 }
